@@ -1,0 +1,15 @@
+dist
+coverage
+
+*.html
+**/*.js
+index.scss
+
+!src/**/*.js
+
+.prettierrc
+
+README.md
+
+package.json
+package-lock.json
