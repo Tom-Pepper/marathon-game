@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "npx eslint src/**/*.js",
     "dev": "npx webpack server",
-    "prettier": "npx prettier --write ."
+    "prettier": "npx prettier --write .",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "style-loader": "^3.3.1",
     "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.4.0"
+    "webpack-dev-server": "^4.4.0",
+    "husky": "^7.0.0"
   }
 }
