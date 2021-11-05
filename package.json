@@ -25,6 +25,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@heroku-cli/plugin-buildpacks": "^7.54.0",
+    "@heroku/buildpack-registry": "^1.0.1",
     "async-file": "^2.0.2",
     "babel-loader": "^8.2.3",
     "cli-ux": "^5.6.3",
