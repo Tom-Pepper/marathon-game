@@ -4,6 +4,9 @@
   "description": "JS Marathon RPG",
   "main": "index.js",
   "scripts": {
+    "build:dev": "env NODE_ENV=development webpack",
+    "build": "env NODE_ENV=production webpack",
+    "start": "webpack server",
     "lint": "npx eslint src/**/*.js",
     "dev": "npx webpack server",
     "prettier": "npx prettier --write .",
@@ -27,14 +30,15 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2",
     "file-loader": "^6.2.0",
+    "heroku": "^7.59.1",
     "html-webpack-plugin": "^5.5.0",
+    "husky": "^7.0.0",
     "prettier": "^2.4.1",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.4.0",
-    "husky": "^7.0.0"
+    "webpack-dev-server": "^4.4.0"
   }
 }
