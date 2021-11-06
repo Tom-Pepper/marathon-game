@@ -1,3 +1,3 @@
-# Zar Marathon Game project
+# JS Marathon Pro Edition
 
 `RPG game project`
