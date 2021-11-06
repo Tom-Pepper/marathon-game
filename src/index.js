@@ -1,3 +1,5 @@
+import './index.scss';
+
 console.log('SERVER RUN');
 
 const a = 10;
