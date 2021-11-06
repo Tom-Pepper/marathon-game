@@ -2,10 +2,10 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: "development",
+  mode: 'development',
   entry: path.resolve(__dirname, 'src/'),
   output: {
-    filename: "main.js",
+    filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
   },
   watch: true,
@@ -17,10 +17,10 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loader: "babel-loader",
+        loader: 'babel-loader',
         exclude: [/node_modules/],
-      }
-    ]
+      },
+    ],
   },
   plugins: [
     new HTMLWebpackPlugin({
@@ -32,5 +32,5 @@ module.exports = {
     open: true,
     hot: true,
     historyApiFallback: true,
-  }
-}
+  },
+};
