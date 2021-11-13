@@ -31,7 +31,7 @@ const playerTwo = {
 //Variables
 const arena = document.querySelector('.arenas');
 const randomButton = document.querySelector('.button');
-const drawTitle = `<div class="loseTitle">Draw!</div>`;
+const drawTitle = `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
 
 // Create player DOM
 function createPlayer(playerClass, player) {
@@ -57,9 +57,9 @@ function hpCalculator() {
   changeHP(playerTwo);
 
   if (playerOne.hp <= 0 && playerTwo.hp > 0) {
-    arena.appendChild(playerWin(playerTwo.name));
+    arena.insertAdjacentHTML('afterbegin', playerWin(playerTwo.name));
   } else if (playerOne.hp > 0 && playerTwo.hp <= 0) {
-    arena.appendChild(playerWin(playerOne.name));
+    arena.insertAdjacentHTML('afterbegin' ,playerWin(playerOne.name));
   } else if (playerOne.hp <= 0 && playerTwo.hp <= 0) {
     arena.insertAdjacentHTML('afterbegin', drawTitle);
   }
@@ -71,24 +71,21 @@ randomButton.addEventListener('click', hpCalculator);
 function changeHP(player) {
   const playerLife = document.querySelector('.player' + player.player + ' .life');
   player.hp -= randomHP();
-  console.log(player.name + 'HP: ' + player.hp)
-  if (player.hp <= 0) {
-    playerLife.style.width = '0';
-  }
-  playerLife.style.width = player.hp + '%';
+
+  player.hp <= 0 ? playerLife.style.width = '0' : playerLife.style.width = player.hp + '%';
 
   if (player.hp <= 0) {
     randomButton.removeEventListener('click', hpCalculator);
-    randomButton.remove();
+    randomButton.style.background = '#d7d7d7';
+    randomButton.style.color = '#000';
+    randomButton.innerText = 'Play again!';
+    randomButton.addEventListener('click', () => document.location.reload());
   }
 }
 
 //Player Win func
 function playerWin(name) {
-  const winTitle = document.createElement('div');
-  winTitle.classList.add('loseTitle');
-  winTitle.innerText = name + ' wins!';
-  return winTitle;
+  return `<div class="loseTitle">${name} wins!</div>>`;
 }
 
 //Execute
