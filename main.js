@@ -10,6 +10,15 @@ const playerOne = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
+  },
+  changeHP: function (hit) {
+    this.hp > 0 ? this.hp -= hit : this.hp = 0;
+  },
+  elHP: function () {
+    return document.querySelector('.player' + this.player + ' .life');
+  },
+  renderHP: function () {
+    this.hp <= 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
   }
 };
 
@@ -25,6 +34,15 @@ const playerTwo = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
+  },
+  changeHP: function (hit) {
+    this.hp > 0 ? this.hp -= hit : this.hp = 0;
+  },
+  elHP: function () {
+    return document.querySelector('.player' + this.player + ' .life');
+  },
+  renderHP: function () {
+    this.hp <= 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
   }
 };
 
@@ -50,10 +68,25 @@ function createPlayer(playerClass, player) {
 //Randomized HP function
 const randomHP = () => Math.ceil(Math.random() * 10);
 
-//HP change function
-function hpCalculator() {
-  changeHP(playerOne);
-  changeHP(playerTwo);
+//When the fight ends, remove listener and show reload button
+function endFight () {
+  randomButton.removeEventListener('click', renderFight);
+  randomButton.style.background = '#d7d7d7';
+  randomButton.style.color = '#000';
+  randomButton.innerText = 'Play again!';
+  randomButton.addEventListener('click', () => document.location.reload());
+}
+
+//Random Button listener (works only when both players alive)
+randomButton.addEventListener('click', renderFight);
+
+//Fight progress render
+function renderFight() {
+  playerOne.changeHP(randomHP());
+  playerOne.renderHP();
+
+  playerTwo.changeHP(randomHP());
+  playerTwo.renderHP();
 
   if (playerOne.hp <= 0 && playerTwo.hp > 0) {
     arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
@@ -63,30 +96,14 @@ function hpCalculator() {
     arena.insertAdjacentHTML('afterbegin', showResult());
   }
 }
-//Random Button listener (works only when both players alive)
-randomButton.addEventListener('click', hpCalculator);
 
-//Change player HP
-function changeHP(player) {
-  const playerLife = document.querySelector('.player' + player.player + ' .life');
-  player.hp -= randomHP();
-
-  player.hp <= 0 ? playerLife.style.width = '0' : playerLife.style.width = player.hp + '%';
-
-  if (player.hp <= 0) {
-    randomButton.removeEventListener('click', hpCalculator);
-    randomButton.style.background = '#d7d7d7';
-    randomButton.style.color = '#000';
-    randomButton.innerText = 'Play again!';
-    randomButton.addEventListener('click', () => document.location.reload());
-  }
-}
-
-//Player Win func
+//Show fight result
 function showResult(name) {
   if (name) {
+    endFight();
     return `<div class="loseTitle">${name} wins!</div>>`;
   } else {
+    endFight();
     return `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
   }
 }
