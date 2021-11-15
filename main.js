@@ -31,7 +31,6 @@ const playerTwo = {
 //Variables
 const arena = document.querySelector('.arenas');
 const randomButton = document.querySelector('.button');
-const drawTitle = `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
 
 // Create player DOM
 function createPlayer(playerClass, player) {
@@ -57,11 +56,11 @@ function hpCalculator() {
   changeHP(playerTwo);
 
   if (playerOne.hp <= 0 && playerTwo.hp > 0) {
-    arena.insertAdjacentHTML('afterbegin', playerWin(playerTwo.name));
+    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
   } else if (playerOne.hp > 0 && playerTwo.hp <= 0) {
-    arena.insertAdjacentHTML('afterbegin' ,playerWin(playerOne.name));
+    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name));
   } else if (playerOne.hp <= 0 && playerTwo.hp <= 0) {
-    arena.insertAdjacentHTML('afterbegin', drawTitle);
+    arena.insertAdjacentHTML('afterbegin', showResult());
   }
 }
 //Random Button listener (works only when both players alive)
@@ -84,8 +83,12 @@ function changeHP(player) {
 }
 
 //Player Win func
-function playerWin(name) {
-  return `<div class="loseTitle">${name} wins!</div>>`;
+function showResult(name) {
+  if (name) {
+    return `<div class="loseTitle">${name} wins!</div>>`;
+  } else {
+    return `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
+  }
 }
 
 //Execute
