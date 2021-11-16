@@ -11,11 +11,8 @@ const playerOne = {
   attack: function () {
     console.log(this.name + 'Fight...');
   },
-  elHP: function () {
-    return document.querySelector('.player' + this.player + ' .life');
-  },
   renderHP: function () {
-    this.hp <= 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
+    this.hp === 0 ? elHP(this).style.width = '0' : elHP(this).style.width = this.hp + '%';
   }
 };
 
@@ -32,11 +29,8 @@ const playerTwo = {
   attack: function () {
     console.log(this.name + 'Fight...');
   },
-  elHP: function () {
-    return document.querySelector('.player' + this.player + ' .life');
-  },
   renderHP: function () {
-    this.hp <= 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
+    this.hp === 0 ? elHP(this).style.width = '0' : elHP(this).style.width = this.hp + '%';
   }
 };
 
@@ -74,27 +68,33 @@ function endFight () {
   randomButton.addEventListener('click', () => document.location.reload());
 }
 
+//Change player HP function
 function changeHP (player, hit) {
   if (player.hp > 0 && player.hp - hit > 0) {
     player.hp -= hit;
-  } else {
+  } else if (player.hp > 0 && player.hp - hit <= 0) {
     player.hp = 0;
   }
 }
 
+//Returns player HP bar after hit
+function elHP(player) {
+  return document.querySelector('.player' + player.player + ' .life');
+}
+
 //Fight progress render
 function renderFight() {
-  changeHP(playerTwo, randomHP());
+  changeHP(playerOne, randomHP());
   playerOne.renderHP();
 
-  changeHP(playerOne, randomHP());
+  changeHP(playerTwo, randomHP());
   playerTwo.renderHP();
 
-  if (playerOne.hp <= 0 && playerTwo.hp > 0) {
+  if (playerOne.hp === 0 && playerTwo.hp > 0) {
     arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
-  } else if (playerOne.hp > 0 && playerTwo.hp <= 0) {
+  } else if (playerOne.hp > 0 && playerTwo.hp === 0) {
     arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name));
-  } else if (playerOne.hp <= 0 && playerTwo.hp <= 0) {
+  } else if (playerOne.hp === 0 && playerTwo.hp === 0) {
     arena.insertAdjacentHTML('afterbegin', showResult());
   }
 }
