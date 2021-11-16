@@ -10,7 +10,10 @@ const playerOne = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
-  }
+  },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP,
 };
 
 //Second fighter object
@@ -25,7 +28,10 @@ const playerTwo = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
-  }
+  },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP,
 };
 
 //Variables
@@ -62,31 +68,31 @@ function endFight () {
 }
 
 //Change player HP function
-function changeHP (player, hit) {
-  if (player.hp > 0 && player.hp - hit > 0) {
-    player.hp -= hit;
-  } else if (player.hp > 0 && player.hp - hit <= 0) {
-    player.hp = 0;
+function changeHP (hit) {
+  if (this.hp > 0 && this.hp - hit > 0) {
+    this.hp -= hit;
+  } else if (this.hp > 0 && this.hp - hit <= 0) {
+    this.hp = 0;
   }
 }
 
 //Returns player HP bar after hit
-function elHP(player) {
-  return document.querySelector('.player' + player.player + ' .life');
+function elHP() {
+  return document.querySelector('.player' + this.player + ' .life');
 }
 
 //Renders player HP after hit
-function renderHP(player) {
-  player.hp === 0 ? elHP(player).style.width = '0' : elHP(player).style.width = player.hp + '%';
+function renderHP() {
+  this.hp === 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
 }
 
 //Fight progress render
 function renderFight() {
-  changeHP(playerOne, randomHP());
-  renderHP(playerOne);
+  playerOne.changeHP(randomHP());
+  playerOne.renderHP();
 
-  changeHP(playerTwo, randomHP());
-  renderHP(playerTwo);
+  playerTwo.changeHP(randomHP());
+  playerTwo.renderHP();
 
   if (playerOne.hp === 0 && playerTwo.hp > 0) {
     arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
