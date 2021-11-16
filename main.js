@@ -10,9 +10,6 @@ const playerOne = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
-  },
-  renderHP: function () {
-    this.hp === 0 ? elHP(this).style.width = '0' : elHP(this).style.width = this.hp + '%';
   }
 };
 
@@ -28,9 +25,6 @@ const playerTwo = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
-  },
-  renderHP: function () {
-    this.hp === 0 ? elHP(this).style.width = '0' : elHP(this).style.width = this.hp + '%';
   }
 };
 
@@ -82,13 +76,18 @@ function elHP(player) {
   return document.querySelector('.player' + player.player + ' .life');
 }
 
+//Renders player HP after hit
+function renderHP(player) {
+  player.hp === 0 ? elHP(player).style.width = '0' : elHP(player).style.width = player.hp + '%';
+}
+
 //Fight progress render
 function renderFight() {
   changeHP(playerOne, randomHP());
-  playerOne.renderHP();
+  renderHP(playerOne);
 
   changeHP(playerTwo, randomHP());
-  playerTwo.renderHP();
+  renderHP(playerTwo);
 
   if (playerOne.hp === 0 && playerTwo.hp > 0) {
     arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
