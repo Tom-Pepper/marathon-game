@@ -1,4 +1,4 @@
-//Players One object
+//First fighter object
 const playerOne = {
   player: 1,
   name: 'Fedot',
@@ -11,9 +11,6 @@ const playerOne = {
   attack: function () {
     console.log(this.name + 'Fight...');
   },
-  changeHP: function (hit) {
-    this.hp > 0 ? this.hp -= hit : this.hp = 0;
-  },
   elHP: function () {
     return document.querySelector('.player' + this.player + ' .life');
   },
@@ -22,7 +19,7 @@ const playerOne = {
   }
 };
 
-//Players Two object
+//Second fighter object
 const playerTwo = {
   player: 2,
   name: 'Vasilich',
@@ -35,9 +32,6 @@ const playerTwo = {
   attack: function () {
     console.log(this.name + 'Fight...');
   },
-  changeHP: function (hit) {
-    this.hp > 0 ? this.hp -= hit : this.hp = 0;
-  },
   elHP: function () {
     return document.querySelector('.player' + this.player + ' .life');
   },
@@ -49,6 +43,9 @@ const playerTwo = {
 //Variables
 const arena = document.querySelector('.arenas');
 const randomButton = document.querySelector('.button');
+
+//Random Button listener (works only when both players alive)
+randomButton.addEventListener('click', renderFight);
 
 // Create player DOM
 function createPlayer(playerClass, player) {
@@ -77,15 +74,20 @@ function endFight () {
   randomButton.addEventListener('click', () => document.location.reload());
 }
 
-//Random Button listener (works only when both players alive)
-randomButton.addEventListener('click', renderFight);
+function changeHP (player, hit) {
+  if (player.hp > 0 && player.hp - hit > 0) {
+    player.hp -= hit;
+  } else {
+    player.hp = 0;
+  }
+}
 
 //Fight progress render
 function renderFight() {
-  playerOne.changeHP(randomHP());
+  changeHP(playerTwo, randomHP());
   playerOne.renderHP();
 
-  playerTwo.changeHP(randomHP());
+  changeHP(playerOne, randomHP());
   playerTwo.renderHP();
 
   if (playerOne.hp <= 0 && playerTwo.hp > 0) {
