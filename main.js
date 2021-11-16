@@ -56,9 +56,8 @@ const randomHP = () => Math.ceil(Math.random() * 10);
 //When the fight ends, remove listener and show reload button
 function endFight () {
   randomButton.removeEventListener('click', renderFight);
-  randomButton.style.background = '#d7d7d7';
-  randomButton.style.color = '#000';
-  randomButton.innerText = 'Play again!';
+  randomButton.classList.add('reloadWrap');
+  randomButton.innerText = 'Reload!';
   randomButton.addEventListener('click', () => document.location.reload());
 }
 
