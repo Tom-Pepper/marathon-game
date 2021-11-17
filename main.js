@@ -1,4 +1,4 @@
-//Players One object
+//First fighter object
 const playerOne = {
   player: 1,
   name: 'Fedot',
@@ -10,10 +10,13 @@ const playerOne = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
-  }
+  },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP,
 };
 
-//Players Two object
+//Second fighter object
 const playerTwo = {
   player: 2,
   name: 'Vasilich',
@@ -25,13 +28,18 @@ const playerTwo = {
   ],
   attack: function () {
     console.log(this.name + 'Fight...');
-  }
+  },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP,
 };
 
 //Variables
 const arena = document.querySelector('.arenas');
 const randomButton = document.querySelector('.button');
-const drawTitle = `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
+
+//Random Button listener (works only when both players alive)
+randomButton.addEventListener('click', renderFight);
 
 // Create player DOM
 function createPlayer(playerClass, player) {
@@ -51,41 +59,59 @@ function createPlayer(playerClass, player) {
 //Randomized HP function
 const randomHP = () => Math.ceil(Math.random() * 10);
 
-//HP change function
-function hpCalculator() {
-  changeHP(playerOne);
-  changeHP(playerTwo);
-
-  if (playerOne.hp <= 0 && playerTwo.hp > 0) {
-    arena.insertAdjacentHTML('afterbegin', playerWin(playerTwo.name));
-  } else if (playerOne.hp > 0 && playerTwo.hp <= 0) {
-    arena.insertAdjacentHTML('afterbegin' ,playerWin(playerOne.name));
-  } else if (playerOne.hp <= 0 && playerTwo.hp <= 0) {
-    arena.insertAdjacentHTML('afterbegin', drawTitle);
-  }
+//When the fight ends, remove listener and show reload button
+function endFight () {
+  randomButton.removeEventListener('click', renderFight);
+  randomButton.classList.add('reloadWrap');
+  randomButton.innerText = 'Reload!';
+  randomButton.addEventListener('click', () => document.location.reload());
 }
-//Random Button listener (works only when both players alive)
-randomButton.addEventListener('click', hpCalculator);
 
-//Change player HP
-function changeHP(player) {
-  const playerLife = document.querySelector('.player' + player.player + ' .life');
-  player.hp -= randomHP();
-
-  player.hp <= 0 ? playerLife.style.width = '0' : playerLife.style.width = player.hp + '%';
-
-  if (player.hp <= 0) {
-    randomButton.removeEventListener('click', hpCalculator);
-    randomButton.style.background = '#d7d7d7';
-    randomButton.style.color = '#000';
-    randomButton.innerText = 'Play again!';
-    randomButton.addEventListener('click', () => document.location.reload());
+//Change player HP function
+function changeHP (hit) {
+  if (this.hp > 0 && this.hp - hit > 0) {
+    this.hp -= hit;
+  } else if (this.hp > 0 && this.hp - hit <= 0) {
+    this.hp = 0;
   }
 }
 
-//Player Win func
-function playerWin(name) {
-  return `<div class="loseTitle">${name} wins!</div>>`;
+//Returns player HP bar after hit
+function elHP() {
+  return document.querySelector('.player' + this.player + ' .life');
+}
+
+//Renders player HP after hit
+function renderHP() {
+  this.hp === 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
+}
+
+//Fight progress render
+function renderFight() {
+  playerOne.changeHP(randomHP());
+  playerOne.renderHP();
+
+  playerTwo.changeHP(randomHP());
+  playerTwo.renderHP();
+
+  if (playerOne.hp === 0 && playerTwo.hp > 0) {
+    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
+  } else if (playerOne.hp > 0 && playerTwo.hp === 0) {
+    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name));
+  } else if (playerOne.hp === 0 && playerTwo.hp === 0) {
+    arena.insertAdjacentHTML('afterbegin', showResult());
+  }
+}
+
+//Show fight result
+function showResult(name) {
+  if (name) {
+    endFight();
+    return `<div class="loseTitle">${name} wins!</div>>`;
+  } else {
+    endFight();
+    return `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
+  }
 }
 
 //Execute
