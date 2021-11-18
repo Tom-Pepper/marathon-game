@@ -11,9 +11,9 @@ const playerOne = {
   attack: function () {
     console.log(this.name + 'Fight...');
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP,
+  changeHP,
+  elHP,
+  renderHP,
 };
 
 //Second fighter object
@@ -29,17 +29,24 @@ const playerTwo = {
   attack: function () {
     console.log(this.name + 'Fight...');
   },
-  changeHP: changeHP,
-  elHP: elHP,
-  renderHP: renderHP,
+  changeHP,
+  elHP,
+  renderHP,
 };
 
 //Variables
 const arena = document.querySelector('.arenas');
-const randomButton = document.querySelector('.button');
+const button = document.querySelector('.button');
+const fightForm = document.querySelector('.control');
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20,
+}
+const ATTACK = ['head', 'body', 'foot'];
 
 //Random Button listener (works only when both players alive)
-randomButton.addEventListener('click', renderFight);
+// randomButton.addEventListener('click', renderFight);
 
 // Create player DOM
 function createPlayer(playerClass, player) {
@@ -57,14 +64,16 @@ function createPlayer(playerClass, player) {
 }
 
 //Randomized HP function
-const randomHP = () => Math.ceil(Math.random() * 10);
+const getRandom = (num) => Math.ceil(Math.random() * num);
 
 //When the fight ends, remove listener and show reload button
 function endFight () {
-  randomButton.removeEventListener('click', renderFight);
-  randomButton.classList.add('reloadWrap');
-  randomButton.innerText = 'Reload!';
-  randomButton.addEventListener('click', () => document.location.reload());
+  fightForm.removeEventListener('submit', fight);
+  fightForm.addEventListener('submit', () => window.location.reload());
+  document.querySelectorAll('input').forEach(item => item.removeAttribute('required'));
+  button.classList.add('.reloadWrap');
+  button.textContent = 'Play again!';
+  document.querySelectorAll('.inputWrap').forEach(item => item.classList.add('is-hidden'));
 }
 
 //Change player HP function
@@ -86,23 +95,6 @@ function renderHP() {
   this.hp === 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
 }
 
-//Fight progress render
-function renderFight() {
-  playerOne.changeHP(randomHP());
-  playerOne.renderHP();
-
-  playerTwo.changeHP(randomHP());
-  playerTwo.renderHP();
-
-  if (playerOne.hp === 0 && playerTwo.hp > 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
-  } else if (playerOne.hp > 0 && playerTwo.hp === 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name));
-  } else if (playerOne.hp === 0 && playerTwo.hp === 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult());
-  }
-}
-
 //Show fight result
 function showResult(name) {
   if (name) {
@@ -114,6 +106,55 @@ function showResult(name) {
   }
 }
 
-//Execute
+//Render players on the fight arena
 arena.insertAdjacentHTML('beforeend', createPlayer('player1', playerOne));
 arena.insertAdjacentHTML('beforeend', createPlayer('player2', playerTwo));
+
+//NPC Enemy Attack func
+function enemyAttack () {
+  const hit = ATTACK[getRandom(3) - 1];
+  const defence = ATTACK[getRandom(3) - 1];
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence,
+  }
+}
+
+//Fight Form listener
+function fight (e) {
+  e.preventDefault();
+  const enemy = enemyAttack();
+  const  attack = {};
+
+  for (let item of fightForm) {
+    if (item.checked && item.name === 'hit') {
+      attack.value = getRandom(HIT[item.value]);
+      attack.hit = item.value;
+    }
+    if (item.checked && item.name === 'defence') {
+      attack.defence = item.value;
+    }
+    item.checked = false;
+  }
+
+  if (enemy.hit !== attack.defence) {
+    playerOne.changeHP(enemy.value);
+    playerOne.renderHP();
+  }
+
+  if (attack.hit !== enemy.defence) {
+    playerTwo.changeHP(attack.value);
+    playerTwo.renderHP();
+  }
+
+  if (playerOne.hp === 0 && playerTwo.hp > 0) {
+    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
+  } else if (playerOne.hp > 0 && playerTwo.hp === 0) {
+    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name));
+  } else if (playerOne.hp === 0 && playerTwo.hp === 0) {
+    arena.insertAdjacentHTML('afterbegin', showResult());
+  }
+}
+
+fightForm.addEventListener('submit', fight);
