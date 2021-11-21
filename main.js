@@ -34,19 +34,61 @@ const playerTwo = {
   renderHP,
 };
 
+//Log object
+const logs = {
+  start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
+  end: [
+    'Результат удара [playerWins]: [playerLose] - труп',
+    '[playerLose] погиб от удара бойца [playerWins]',
+    'Результат боя: [playerLose] - жертва, [playerWins] - убийца',
+  ],
+  hit: [
+    '[playerDefence] пытался сконцентрироваться, но [playerKick] разбежавшись раздробил копчиком левое ухо врага.',
+    '[playerDefence] расстроился, как вдруг, неожиданно [playerKick] случайно раздробил грудью грудину противника.',
+    '[playerDefence] зажмурился, а в это время [playerKick], прослезившись, раздробил кулаком пах оппонента.',
+    '[playerDefence] чесал <вырезано цензурой>, и внезапно неустрашимый [playerKick] отчаянно размозжил грудью левый бицепс оппонента.',
+    '[playerDefence] задумался, но внезапно [playerKick] случайно влепил грубый удар копчиком в пояс оппонента.',
+    '[playerDefence] ковырялся в зубах, но [playerKick] проснувшись влепил тяжелый удар пальцем в кадык врага.',
+    '[playerDefence] вспомнил что-то важное, но внезапно [playerKick] зевнув, размозжил открытой ладонью челюсть противника.',
+    '[playerDefence] осмотрелся, и в это время [playerKick] мимоходом раздробил стопой аппендикс соперника.',
+    '[playerDefence] кашлянул, но внезапно [playerKick] показав палец, размозжил пальцем грудь соперника.',
+    '[playerDefence] пытался что-то сказать, а жестокий [playerKick] проснувшись размозжил копчиком левую ногу противника.',
+    '[playerDefence] забылся, как внезапно безумный [playerKick] со скуки, влепил удар коленом в левый бок соперника.',
+    '[playerDefence] поперхнулся, а за это [playerKick] мимоходом раздробил коленом висок врага.',
+    '[playerDefence] расстроился, а в это время наглый [playerKick] пошатнувшись размозжил копчиком губы оппонента.',
+    '[playerDefence] осмотрелся, но внезапно [playerKick] робко размозжил коленом левый глаз противника.',
+    '[playerDefence] осмотрелся, а [playerKick] вломил дробящий удар плечом, пробив блок, куда обычно не бьют оппонента.',
+    '[playerDefence] ковырялся в зубах, как вдруг, неожиданно [playerKick] отчаянно размозжил плечом мышцы пресса оппонента.',
+    '[playerDefence] пришел в себя, и в это время [playerKick] провел разбивающий удар кистью руки, пробив блок, в голень противника.',
+    '[playerDefence] пошатнулся, а в это время [playerKick] хихикая влепил грубый удар открытой ладонью по бедрам врага.',
+  ],
+  defence: [
+    '[playerKick] потерял момент и храбрый [playerDefence] отпрыгнул от удара открытой ладонью в ключицу.',
+    '[playerKick] не контролировал ситуацию, и потому [playerDefence] поставил блок на удар пяткой в правую грудь.',
+    '[playerKick] потерял момент и [playerDefence] поставил блок на удар коленом по селезенке.',
+    '[playerKick] поскользнулся и задумчивый [playerDefence] поставил блок на тычок головой в бровь.',
+    '[playerKick] старался провести удар, но непобедимый [playerDefence] ушел в сторону от удара копчиком прямо в пятку.',
+    '[playerKick] обманулся и жестокий [playerDefence] блокировал удар стопой в солнечное сплетение.',
+    '[playerKick] не думал о бое, потому расстроенный [playerDefence] отпрыгнул от удара кулаком куда обычно не бьют.',
+    '[playerKick] обманулся и жестокий [playerDefence] блокировал удар стопой в солнечное сплетение.'
+  ],
+  draw: 'Ничья - это тоже победа!'
+};
+
 //Variables
 const arena = document.querySelector('.arenas');
 const button = document.querySelector('.button');
 const fightForm = document.querySelector('.control');
+const chat = document.querySelector('.chat');
+const date = new Date();
+const currentTime = `${date.getHours()}:${date.getMinutes()}`;
+
 const HIT = {
   head: 30,
   body: 25,
   foot: 20,
 }
 const ATTACK = ['head', 'body', 'foot'];
-
-//Random Button listener (works only when both players alive)
-// randomButton.addEventListener('click', renderFight);
 
 // Create player DOM
 function createPlayer(playerClass, player) {
@@ -65,16 +107,6 @@ function createPlayer(playerClass, player) {
 
 //Randomized HP function
 const getRandom = (num) => Math.ceil(Math.random() * num);
-
-//When the fight ends, remove listener and show reload button
-function endFight () {
-  fightForm.removeEventListener('submit', fight);
-  fightForm.addEventListener('submit', () => window.location.reload());
-  document.querySelectorAll('input').forEach(item => item.removeAttribute('required'));
-  button.classList.add('.reloadWrap');
-  button.textContent = 'Play again!';
-  document.querySelectorAll('.inputWrap').forEach(item => item.classList.add('is-hidden'));
-}
 
 //Change player HP function
 function changeHP (hit) {
@@ -95,20 +127,15 @@ function renderHP() {
   this.hp === 0 ? this.elHP().style.width = '0' : this.elHP().style.width = this.hp + '%';
 }
 
-//Show fight result
-function showResult(name) {
-  if (name) {
-    endFight();
-    return `<div class="loseTitle">${name} wins!</div>>`;
-  } else {
-    endFight();
-    return `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
-  }
-}
+//Generates fight log
+function generateLog (type, player1, player2, value) {
+  const text = logs[type][getRandom([logs[type].length - 1])]
+    .replace('[playerKick]', player1.name)
+    .replace('[playerDefence]', player2.name);
 
-//Render players on the fight arena
-arena.insertAdjacentHTML('beforeend', createPlayer('player1', playerOne));
-arena.insertAdjacentHTML('beforeend', createPlayer('player2', playerTwo));
+  const chatEl = `<p>${currentTime}: ${text} <br><span class="hit-value">${0 - value}</span>, ${player2.hp}/100</p>`;
+  chat.insertAdjacentHTML('afterbegin', chatEl);
+}
 
 //NPC Enemy Attack func
 function enemyAttack () {
@@ -121,10 +148,8 @@ function enemyAttack () {
   }
 }
 
-//Fight Form listener
-function fight (e) {
-  e.preventDefault();
-  const enemy = enemyAttack();
+//Player attack func
+function playerAttack () {
   const  attack = {};
 
   for (let item of fightForm) {
@@ -138,23 +163,76 @@ function fight (e) {
     item.checked = false;
   }
 
-  if (enemy.hit !== attack.defence) {
+  return attack;
+}
+
+//Fight Form listener
+function fight (e) {
+  e.preventDefault();
+
+  const enemy = enemyAttack();
+  const player = playerAttack();
+
+  if (enemy.hit !== player.defence) {
     playerOne.changeHP(enemy.value);
     playerOne.renderHP();
+    generateLog('hit', playerTwo, playerOne, enemy.value);
   }
 
-  if (attack.hit !== enemy.defence) {
-    playerTwo.changeHP(attack.value);
+  if (enemy.defence === player.hit) {
+    generateLog('defence', playerOne, playerTwo, 0);
+  }
+
+  if (player.hit !== enemy.defence) {
+    playerTwo.changeHP(player.value);
     playerTwo.renderHP();
+    generateLog('hit', playerOne, playerTwo, player.value);
+  }
+
+  if (player.defence === enemy.hit) {
+    generateLog('defence', playerTwo, playerOne, 0);
   }
 
   if (playerOne.hp === 0 && playerTwo.hp > 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name));
+    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name, playerOne.name));
   } else if (playerOne.hp > 0 && playerTwo.hp === 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name));
+    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name, playerTwo.name));
   } else if (playerOne.hp === 0 && playerTwo.hp === 0) {
     arena.insertAdjacentHTML('afterbegin', showResult());
   }
 }
+
+//Show fight result
+function showResult(winner, loser) {
+  if (winner && loser) {
+    endFight();
+    chat.insertAdjacentHTML('afterbegin', logs['end'][getRandom(logs['end'].length - 1)]
+      .replace('[playerWins]', winner)
+      .replace('[playerLose]', loser));
+    return `<div class="loseTitle">${winner} wins!</div>>`;
+  } else {
+    endFight();
+    chat.insertAdjacentHTML('afterbegin', logs['draw']);
+    return `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
+  }
+}
+
+//When the fight ends, remove listener and show reload button
+function endFight () {
+  fightForm.removeEventListener('submit', fight);
+  fightForm.addEventListener('submit', () => window.location.reload());
+  document.querySelectorAll('input').forEach(item => item.removeAttribute('required'));
+  button.classList.add('.reloadWrap');
+  button.textContent = 'Play again!';
+  document.querySelectorAll('.inputWrap').forEach(item => item.classList.add('is-hidden'));
+}
+
+//Render players on the fight arena and start to fight
+arena.insertAdjacentHTML('beforeend', createPlayer('player1', playerOne));
+arena.insertAdjacentHTML('beforeend', createPlayer('player2', playerTwo));
+chat.insertAdjacentHTML('afterbegin', logs['start']
+  .replace('[time]', currentTime)
+  .replace('[player1]', playerOne.name)
+  .replace('[player2]', playerTwo.name));
 
 fightForm.addEventListener('submit', fight);
