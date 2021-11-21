@@ -81,7 +81,8 @@ const button = document.querySelector('.button');
 const fightForm = document.querySelector('.control');
 const chat = document.querySelector('.chat');
 const date = new Date();
-const currentTime = `${date.getHours()}:${date.getMinutes()}`;
+const normalize = (time) => (time.toString().length > 1 ? time : `0${time}`);
+const currentTime = `${normalize(date.getHours())}:${normalize(date.getMinutes())}`;
 
 const HIT = {
   head: 30,
