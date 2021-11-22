@@ -130,11 +130,12 @@ function renderHP() {
 
 //Generates fight log
 function generateLog (type, player1, player2, value) {
+  const hitTime = `${normalize(date.getHours())}:${normalize(date.getMinutes())}`;
   const text = logs[type][getRandom([logs[type].length - 1])]
     .replace('[playerKick]', player1.name)
     .replace('[playerDefence]', player2.name);
 
-  const chatEl = `<p>${currentTime}: ${text} <br><span class="hit-value">${0 - value}</span>, ${player2.hp}/100</p>`;
+  const chatEl = `<p>${hitTime}: ${text} <br><span class="hit-value">${0 - value}</span>, ${player2.hp}/100</p>`;
   chat.insertAdjacentHTML('afterbegin', chatEl);
 }
 
