@@ -3,7 +3,7 @@ import createPlayer from "./players.js";
 
 import generateLog from "./logs.js";
 
-import { arena, fightForm, ATTACK, HIT, button } from "./variables.js";
+import { arena, fightForm } from "./variables.js";
 
 import fight from "./fight_logic.js";
 
