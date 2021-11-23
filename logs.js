@@ -1,4 +1,10 @@
-const logs = {
+//Fight log
+import { playerOne, playerTwo } from "./players.js";
+import { getRandom } from "./utils.js";
+
+import { normalize, currentTime, chat } from "./variables.js";
+
+export const logs = {
   start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
   end: [
     'Результат удара [playerWins]: [playerLose] - труп',
@@ -37,3 +43,49 @@ const logs = {
   ],
   draw: 'Ничья - это тоже победа!'
 };
+
+//Generates fight log
+function generateLog (type, player1, player2, value) {
+  const hitTime = `${normalize(new Date().getHours())}:${normalize(new Date().getMinutes())}`;
+
+  switch (type) {
+    case 'start':
+      const startEl = logs[type]
+        .replace('[time]', currentTime)
+        .replace('[player1]', playerOne.name)
+        .replace('[player2]', playerTwo.name)
+      chat.insertAdjacentHTML('afterbegin', `<p>${startEl}</p>`);
+      break;
+
+    case 'hit':
+      const hitEl = logs[type][getRandom([logs[type].length - 1])]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name);
+
+      const hitText = `<p>${hitTime}: ${hitEl} <br><span class="hit-value">${0 - value}</span>, ${player2.hp}/100</p>`;
+      chat.insertAdjacentHTML('afterbegin', hitText);
+      break;
+
+    case 'defence':
+      const defEl = logs[type][getRandom([logs[type].length - 1])]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name);
+      const defText = `<p>${hitTime}: ${defEl} <br><span>${0 - value}</span>, ${player2.hp}/100</p>`;
+      chat.insertAdjacentHTML('afterbegin', defText);
+      break;
+
+    case 'end':
+      const endEl = logs['end'][getRandom(logs['end'].length - 1)]
+        .replace('[playerWins]', player1)
+        .replace('[playerLose]', player2);
+      const endText = `<p>${hitTime}: ${endEl}</p>`;
+      chat.insertAdjacentHTML('afterbegin', endText);
+      break;
+
+    case 'draw':
+      chat.insertAdjacentHTML('afterbegin', `<p>${logs[type]}</p>p>`);
+      break;
+  }
+}
+
+export default generateLog;
