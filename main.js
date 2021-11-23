@@ -130,13 +130,46 @@ function renderHP() {
 
 //Generates fight log
 function generateLog (type, player1, player2, value) {
-  const hitTime = `${normalize(date.getHours())}:${normalize(date.getMinutes())}`;
-  const text = logs[type][getRandom([logs[type].length - 1])]
-    .replace('[playerKick]', player1.name)
-    .replace('[playerDefence]', player2.name);
+  const hitTime = `${normalize(new Date().getHours())}:${normalize(new Date().getMinutes())}`;
 
-  const chatEl = `<p>${hitTime}: ${text} <br><span class="hit-value">${0 - value}</span>, ${player2.hp}/100</p>`;
-  chat.insertAdjacentHTML('afterbegin', chatEl);
+  switch (type) {
+    case 'start':
+      const startEl = logs[type]
+        .replace('[time]', currentTime)
+        .replace('[player1]', playerOne.name)
+        .replace('[player2]', playerTwo.name)
+      chat.insertAdjacentHTML('afterbegin', `<p>${startEl}</p>`);
+      break;
+
+    case 'hit':
+      const hitEl = logs[type][getRandom([logs[type].length - 1])]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name);
+
+      const hitText = `<p>${hitTime}: ${hitEl} <br><span class="hit-value">${0 - value}</span>, ${player2.hp}/100</p>`;
+      chat.insertAdjacentHTML('afterbegin', hitText);
+      break;
+
+    case 'defence':
+      const defEl = logs[type][getRandom([logs[type].length - 1])]
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name);
+      const defText = `<p>${hitTime}: ${defEl} <br><span>${0 - value}</span>, ${player2.hp}/100</p>`;
+      chat.insertAdjacentHTML('afterbegin', defText);
+      break;
+
+    case 'end':
+      const endEl = logs['end'][getRandom(logs['end'].length - 1)]
+        .replace('[playerWins]', player1)
+        .replace('[playerLose]', player2);
+      const endText = `<p>${hitTime}: ${endEl}</p>`;
+      chat.insertAdjacentHTML('afterbegin', endText);
+      break;
+
+    case 'draw':
+      chat.insertAdjacentHTML('afterbegin', `<p>${logs[type]}</p>p>`);
+      break;
+  }
 }
 
 //NPC Enemy Attack func
@@ -208,13 +241,11 @@ function fight (e) {
 function showResult(winner, loser) {
   if (winner && loser) {
     endFight();
-    chat.insertAdjacentHTML('afterbegin', logs['end'][getRandom(logs['end'].length - 1)]
-      .replace('[playerWins]', winner)
-      .replace('[playerLose]', loser));
+    generateLog('end', winner, loser);
     return `<div class="loseTitle">${winner} wins!</div>>`;
   } else {
     endFight();
-    chat.insertAdjacentHTML('afterbegin', logs['draw']);
+    generateLog('draw');
     return `<div class="loseTitle">Both dead!<br>Mua-ha-ha!</div>`;
   }
 }
@@ -232,9 +263,6 @@ function endFight () {
 //Render players on the fight arena and start to fight
 arena.insertAdjacentHTML('beforeend', createPlayer('player1', playerOne));
 arena.insertAdjacentHTML('beforeend', createPlayer('player2', playerTwo));
-chat.insertAdjacentHTML('afterbegin', logs['start']
-  .replace('[time]', currentTime)
-  .replace('[player1]', playerOne.name)
-  .replace('[player2]', playerTwo.name));
+generateLog('start', playerOne, playerTwo);
 
 fightForm.addEventListener('submit', fight);
