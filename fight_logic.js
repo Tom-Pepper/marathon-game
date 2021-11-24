@@ -7,9 +7,12 @@ import {getRandom} from "./utils.js";
 import {playerOne, playerTwo} from "./players.js";
 import generateLog from "./logs.js";
 
+const {name, changeHP, renderHP, ...rest} = playerOne;
+const {name: enemyName, changeHP: enemyChangeHP, renderHP: enemyRenderHP,...restEnemy} = playerTwo;
+
 function enemyAttack () {
-  const hit = ATTACK[getRandom(3) - 1];
-  const defence = ATTACK[getRandom(3) - 1];
+  const hit = ATTACK[getRandom(ATTACK.length) - 1];
+  const defence = ATTACK[getRandom(ATTACK.length) - 1];
   return {
     value: getRandom(HIT[hit]),
     hit,
@@ -43,8 +46,8 @@ function fight (e) {
   const player = playerAttack();
 
   if (enemy.hit !== player.defence) {
-    playerOne.changeHP(enemy.value);
-    playerOne.renderHP();
+    changeHP(enemy.value);
+    renderHP();
     generateLog('hit', playerTwo, playerOne, enemy.value);
   }
 
@@ -53,8 +56,8 @@ function fight (e) {
   }
 
   if (player.hit !== enemy.defence) {
-    playerTwo.changeHP(player.value);
-    playerTwo.renderHP();
+    enemyChangeHP(player.value);
+    enemyRenderHP();
     generateLog('hit', playerOne, playerTwo, player.value);
   }
 
@@ -63,9 +66,9 @@ function fight (e) {
   }
 
   if (playerOne.hp === 0 && playerTwo.hp > 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult(playerTwo.name, playerOne.name));
+    arena.insertAdjacentHTML('afterbegin', showResult(enemyName, name));
   } else if (playerOne.hp > 0 && playerTwo.hp === 0) {
-    arena.insertAdjacentHTML('afterbegin', showResult(playerOne.name, playerTwo.name));
+    arena.insertAdjacentHTML('afterbegin', showResult(name, enemyName));
   } else if (playerOne.hp === 0 && playerTwo.hp === 0) {
     arena.insertAdjacentHTML('afterbegin', showResult());
   }

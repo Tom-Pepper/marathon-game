@@ -52,8 +52,8 @@ function generateLog (type, player1, player2, value) {
     case 'start':
       const startEl = logs[type]
         .replace('[time]', currentTime)
-        .replace('[player1]', playerOne.name)
-        .replace('[player2]', playerTwo.name)
+        .replace('[player1]', player1.name)
+        .replace('[player2]', player2.name)
       chat.insertAdjacentHTML('afterbegin', `<p>${startEl}</p>`);
       break;
 
