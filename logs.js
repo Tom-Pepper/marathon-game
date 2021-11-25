@@ -1,5 +1,4 @@
 //Fight log
-import { playerOne, playerTwo } from "./players.js";
 import { getRandom } from "./utils.js";
 
 import { normalize, currentTime, chat } from "./variables.js";
