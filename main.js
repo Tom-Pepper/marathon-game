@@ -7,6 +7,6 @@
 //
 // import fight from "./fight_logic.js";
 
-import {game} from "./Game.js";
+import {game} from "./src/Game.js";
 
-game.start()
+game.start();
